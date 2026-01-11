@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quà bất ngờ</title>
+    <style>
+        body { margin: 0; background: #000; overflow: hidden; font-family: 'Arial', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; text-align: center; }
+        .container { z-index: 1; position: relative; }
+        h1 { color: #ffeb3b; font-size: 2.2em; text-shadow: 0 0 20px #ff5722; margin-bottom: 15px; padding: 0 20px; line-height: 1.4; }
+        p { color: #fff; font-size: 1.1em; opacity: 0.8; letter-spacing: 1px; }
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Chào em, đây là mã code do anh tự tạo bằng điện thoại Android</h1>
+        <p>Một món quà nhỏ tặng em! ✨</p>
+    </div>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x; this.y = y; this.color = color;
+                this.velocity = { x: (Math.random() - 0.5) * 10, y: (Math.random() - 0.5) * 10 };
+                this.alpha = 1; this.friction = 0.95;
+            }
+            draw() {
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = this.color; ctx.fill();
+            }
+            update() {
+                this.velocity.x *= this.friction; this.velocity.y *= this.friction;
+                this.x += this.velocity.x; this.y += this.velocity.y;
+                this.alpha -= 0.012;
+            }
+        }
+
+        let particles = [];
+        function createFirework(x, y) {
+            const colors = ['#ff0044', '#00ff44', '#4400ff', '#ffcc00', '#ffffff', '#ff00ff'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            for (let i = 0; i < 50; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function animate() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                if (p.alpha > 0) { p.update(); p.draw(); }
+                else { particles.splice(i, 1); }
+            });
+            requestAnimationFrame(animate);
+        }
+
+        setInterval(() => {
+            createFirework(Math.random() * canvas.width, Math.random() * canvas.height);
+        }, 700);
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        animate();
+    </script>
+</body>
+</html>
